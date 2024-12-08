@@ -70,7 +70,7 @@ public class UtilisateurController {
         // Ajouter les utilisateurs au modèle pour les passer à la vue
         model.addAttribute("utilisateurs", utilisateurs);
 
-        return "liste_utilisateurs"; // Nom du fichier HTML
+        return "liste_paiements"; // Nom du fichier HTML
     }
 
 

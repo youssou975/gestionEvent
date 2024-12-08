@@ -3,141 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin</title>
+  <title>EVENT Admin</title>
+
+  <!-- Intégrer Bootstrap 5 et FontAwesome -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- CSS personnalisé -->
   <style>
+    /* Définir le style global de la page */
     body {
-      background-color: #f8f9fa;
       font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #eceff1, #ffffff);
+      margin: 0;
+      padding: 0;
     }
 
+    /* Navigation avec un style épuré */
     .navbar {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background: #ff15df;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
 
     .navbar-brand {
+      font-size: 1.6rem;
+      color: #f3f4f6 !important;
       font-weight: bold;
-      font-size: 1.5rem;
-      color: #f8f9fa !important;
     }
 
     .nav-link {
-      color: #f8f9fa !important;
-      transition: color 0.3s ease;
+      color: #f3f4f6 !important;
+      transition: color 0.3s ease-in-out;
     }
 
     .nav-link:hover {
-      color: #ffc107 !important;
+      color: #ffa500;
     }
 
+    /* Titre principal de la page */
     h2 {
-      color: #343a40;
-      font-weight: bold;
-      margin-bottom: 30px;
       text-align: center;
+      color: #333;
+      font-weight: bold;
+      margin: 20px 0;
     }
 
+    /* Conteneur pour la liste d'événements */
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    /* Cartes avec des ombres et des transitions */
     .card {
       border: none;
-      border-radius: 15px;
-      background: #ffffff;
+      border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
 
     .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     }
 
     .card-title {
-      font-size: 1.25rem;
-      color: #007bff;
+      font-size: 1.3rem;
+      color: #555;
+      font-weight: bold;
     }
 
     .card-text {
       font-size: 0.9rem;
-      color: #6c757d;
+      color: #666;
+      line-height: 1.5;
     }
 
-    .btn {
-      transition: background-color 0.3s ease, color 0.3s ease;
+    /* Boutons avec des transitions */
+    .btn-custom {
+      transition: transform 0.2s ease, background-color 0.3s ease;
+      border-radius: 6px;
+      padding: 10px 15px;
     }
 
     .btn-warning {
-      background-color: #ffc107;
+      background-color: #ff71dd;
       border: none;
-    }
-
-    .btn-warning:hover {
-      background-color: #e0a800;
     }
 
     .btn-danger {
-      background-color: #dc3545;
+      background-color: #be0000;
       border: none;
     }
 
-    .btn-danger:hover {
-      background-color: #bd2130;
+    .btn-custom:hover {
+      transform: scale(1.1);
     }
 
-    .fa-sign-out-alt {
-      margin-right: 5px;
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .card {
+        margin-bottom: 20px;
+      }
+
+      .btn-custom {
+        padding: 8px 12px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .container {
+        padding: 10px;
+      }
     }
   </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Dashboard Admin</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <a class="navbar-brand" href="#">📊 EVENT Admin</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
           <a class="nav-link" th:href="@{/evenements/ajouter}">
-            <i class="fa fa-calendar-plus"></i> Ajouter un Événement
+            <i class="fa fa-calendar-plus"></i> Ajouter Event
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" th:href="@{/utilisateurs}">
-            <i class="fa fa-users"></i> Voir la Liste des Utilisateurs
+            <i class="fa fa-users"></i> Liste des paiements
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-danger" th:href="@{/logout}">
-            <i class="fa fa-sign-out-alt"></i> Se Déconnecter
+            <i class="fa fa-sign-out-alt"></i> Déconnexion
           </a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
-<div class="container mt-5">
-  <h2>Liste des Événements</h2>
+
+<!-- Contenu Principal -->
+<div class="container">
+  <h2>🔎 Liste des Événements</h2>
   <div class="row g-4">
     <div class="col-md-4" th:each="evenement : ${evenements}">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title" th:text="${evenement.titre}"></h5>
+          <h5 class="card-title" th:text="${evenement.titre}">Titre de l'Événement</h5>
           <p class="card-text">
-            <strong>Description:</strong> <span th:text="${evenement.description}"></span><br>
-            <strong>Date:</strong> <span th:text="${evenement.date}"></span><br>
-            <strong>Lieu:</strong> <span th:text="${evenement.lieu}"></span><br>
-            <strong>Capacité:</strong> <span th:text="${evenement.capacite}"></span><br>
-            <strong>Type:</strong> <span th:text="${evenement.type}"></span>
+            <strong>Description:</strong> <span th:text="${evenement.description}">Description...</span><br>
+            <strong>Date:</strong> <span th:text="${evenement.date}">00/00/0000</span><br>
+            <strong>Lieu:</strong> <span th:text="${evenement.lieu}">Lieu...</span><br>
+            <strong>Capacité:</strong> <span th:text="${evenement.capacite}">0</span>
           </p>
-          <a th:href="@{'/modifierEvenement/' + ${evenement.id}}" class="btn btn-warning btn-sm">Modifier</a>
-          <a th:href="@{'/supprimerEvenement/' + ${evenement.id}}" class="btn btn-danger btn-sm">Supprimer</a>
+          <a th:href="@{'/modifierEvenement/' + ${evenement.id}}" class="btn btn-warning btn-custom">Modifier</a>
+          <a th:href="@{'/supprimerEvenement/' + ${evenement.id}}" class="btn btn-danger btn-custom">Supprimer</a>
+
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Intégrer le JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

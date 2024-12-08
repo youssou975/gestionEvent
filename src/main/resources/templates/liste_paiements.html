@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Liste des Utilisateurs</title>
+  <title>Liste des Paiements</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -12,8 +12,9 @@
       font-family: 'Roboto', sans-serif;
     }
 
-    .navbar {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .navbar-dark {
+      background: #ff15df;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
 
     .navbar-brand {
@@ -79,9 +80,9 @@
   </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark ">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Dashboard Admin</a>
+    <a class="navbar-brand" href="#">EVENT Admin</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -89,7 +90,7 @@
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
           <a class="nav-link" th:href="@{/evenements/dashboard}">
-            <i class="fa fa-calendar"></i> Retour au Dashboard
+            <i class="fa fa-calendar"></i> Retour
           </a>
         </li>
         <li class="nav-item">
@@ -102,37 +103,28 @@
   </div>
 </nav>
 <div class="container mt-5">
-  <h2>Liste des Utilisateurs</h2>
+  <h2>Liste des Paiement</h2>
   <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead>
       <tr>
-        <th>ID</th>
-        <th>Nom</th>
-        <th>Email</th>
-        <th>Rôle</th>
-        <th>Actions</th>
+        <th>Nom Utilisateur</th>
+        <th>Email Utilisateur</th>
+        <th>Événement</th>
+        <th>Montant</th>
+        <th>Statut Paiement</th>
       </tr>
       </thead>
       <tbody>
-      <!-- Boucle Thymeleaf pour afficher les utilisateurs -->
-      <tr th:each="utilisateur : ${utilisateurs}">
-        <td th:text="${utilisateur.id}"></td>
-        <td th:text="${utilisateur.nom}"></td>
-        <td th:text="${utilisateur.email}"></td>
-        <td th:text="${utilisateur.role}"></td>
-        <td>
-          <a th:href="@{'/modifierUtilisateur/' + ${utilisateur.id}}" class="btn btn-warning btn-sm">
-            <i class="fa fa-edit"></i> Modifier
-          </a>
-          <a th:href="@{'/supprimerUtilisateur/' + ${utilisateur.id}}" class="btn btn-danger btn-sm">
-            <i class="fa fa-trash-alt"></i> Supprimer
-          </a>
-        </td>
+      <tr th:each="paiement : ${paiements}">
+        <td th:text="${paiement.utilisateur.nom}">Nom Utilisateur</td>
+        <td th:text="${paiement.utilisateur.email}">Email Utilisateur</td>
+        <td th:text="${paiement.evenement.nom}">Événement</td>
+        <td th:text="${paiement.montant}">Montant</td>
+        <td th:text="${paiement.statut}">Statut</td>
       </tr>
-      <!-- Message si la liste est vide -->
-      <tr th:if="${utilisateurs.isEmpty()}">
-        <td colspan="5" class="text-center text-muted">Aucun utilisateur trouvé.</td>
+      <tr th:if="${paiements.isEmpty()}">
+        <td colspan="5" class="text-muted text-center">Aucun paiement trouvé.</td>
       </tr>
       </tbody>
     </table>

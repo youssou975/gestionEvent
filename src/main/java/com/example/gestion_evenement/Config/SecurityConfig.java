@@ -32,8 +32,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Désactiver CSRF (non recommandé en production)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/login", "/css/**","/paiements/**").permitAll() // Autorise ces pages pour les utilisateurs non authentifié
+                        .requestMatchers("/register", "/login", "/css/**").permitAll() // Autorise ces pages pour les utilisateurs non authentifié
                         .requestMatchers("/dashboardadmin" , "/evenements/ajouter" , "/evenements/dashboard").hasAuthority("ORGANISATEUR")
+                        .requestMatchers("/paiements/**").authenticated()
                         .anyRequest().authenticated() // Toutes les autres pages nécessitent une authentification
                 )
                 .formLogin(form -> form

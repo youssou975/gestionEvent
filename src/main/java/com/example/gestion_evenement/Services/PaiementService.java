@@ -13,6 +13,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,6 +31,10 @@ public class PaiementService {
         this.utilisateurRepository = utilisateurRepository;
         this.evenementRepository = evenementRepository;
     }
+
+
+    public List<Paiement> getAllPaiements() {
+        return paiementRepository.findAll();}
 
     // Créer un paiement avec Stripe et l'enregistrer dans la base de données
     public Paiement createPaiement(Double montant, String currency, Long utilisateurId, Long evenementId) throws StripeException {
@@ -72,6 +77,8 @@ public class PaiementService {
     }
 
 
+
+
     // Mettre à jour le statut du paiement après confirmation
     public Paiement updatePaiementStatus(String paymentIntentId, StatutPaiement statut) {
         Optional<Paiement> optionalPaiement = paiementRepository.findByPaymentIntentId(paymentIntentId);
@@ -82,4 +89,6 @@ public class PaiementService {
         }
         throw new RuntimeException("Paiement introuvable pour l'ID Stripe : " + paymentIntentId);
     }
+
+
 }

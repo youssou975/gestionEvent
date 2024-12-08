@@ -8,119 +8,180 @@
   <!-- Inclure Stripe.js -->
   <script src="https://js.stripe.com/v3/"></script>
 
-  <!-- Inclure Bootstrap pour le style -->
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Inclure Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Ajouter un peu de style personnalisé -->
+  <!-- Style personnalisé -->
   <style>
-    .payment-form {
-      max-width: 500px;
-      margin: auto;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background-color: #f9f9f9;
+    /* Contexte global avec un dégradé */
+    body {
+      background: linear-gradient(135deg, #d9b3d2, rgba(255, 21, 223, 0.63));
+      font-family: 'Arial', sans-serif;
+      color: #000000;
     }
-    .payment-form h3 {
+
+    /* Conteneur de la carte de paiement */
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 30px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    /* Titre stylisé */
+    h3 {
       text-align: center;
+      color: #5f63f2;
+      font-weight: bold;
       margin-bottom: 20px;
+      font-size: 24px;
     }
-    .payment-form button {
-      width: 100%;
+
+    /* Style pour les boutons */
+    .btn-pay {
+      background: linear-gradient(90deg, #5f63f2, #9b8fff);
+      border: none;
+      color: white;
+      transition: transform 0.2s ease-in-out, background 0.3s ease;
+    }
+
+    .btn-pay:hover {
+      transform: scale(1.1);
+      background: linear-gradient(90deg, #9b8fff, #5f63f2);
+    }
+
+    /* Formulaire de paiement avec des bords arrondis */
+    #payment-form {
+      padding: 20px;
+      border: none;
+    }
+
+    /* Animation sur le conteneur */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Stripe card élément */
+    #card-element {
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      transition: box-shadow 0.2s ease-in-out;
+    }
+
+    #card-element:focus {
+      outline: none;
+      box-shadow: 0 0 8px #5f63f2;
+    }
+
+    /* Messages d'erreur */
+    #card-errors {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
+<br>
+<br>
+<br>
+<br>
 
-<div class="container mt-5">
-  <div class="payment-form">
-    <h3>Payer pour l'Événement</h3>
+<div class="container">
 
-    <!-- Formulaire de paiement -->
-    <form id="payment-form" th:action="@{/paiements/create}" method="POST">
-      <div class="form-group">
-        <label for="utilisateurId">Utilisateur</label>
-        <select id="utilisateurId" class="form-control" name="utilisateurId" required>
-          <!-- Option d'utilisateur dynamique à ajouter -->
-          <option th:each="utilisateur : ${utilisateurs}" th:value="${utilisateur.id}" th:text="${utilisateur.nom}"></option>
-        </select>
+  <!-- Titre principal -->
+  <h3>✨ Effectuez votre Paiement en toute simplicité ✨</h3>
+
+  <!-- Formulaire de paiement -->
+  <form id="payment-form" th:action="@{/paiements/create}" method="POST">
+    <!-- Informations utilisateur connectés -->
+    <div class="mb-3">
+
+      <label class="form-label"><strong>Votre nom et email : </strong></label>
+      <div class="form-control bg-light text-dark">
+        <span th:text= "${utilisateurConnecte.nom} + ' ' + ${utilisateurConnecte.email}">Utilisateur non connecté</span>
       </div>
+    </div>
 
-      <div class="form-group">
-        <label for="evenementId">Événement</label>
-        <select id="evenementId" class="form-control" name="evenementId" required>
-          <!-- Option d'événements dynamique à ajouter -->
-          <option th:each="evenement : ${evenements}" th:value="${evenement.id}" th:text="${evenement.titre}"></option>
-        </select>
-      </div>
+    <!-- Champs cachés pour les valeurs nécessaires -->
+    <input type="hidden" id="utilisateurId" th:value="${utilisateurConnecte.id}" />
+    <input type="hidden" id="evenementId" th:value="${evenementSelectionne.id}" />
+    <input type="hidden" id="montant" th:value="${evenementSelectionne.prix}" />
 
-      <div class="form-group">
-        <label for="montant">Montant</label>
-        <input type="number" class="form-control" id="montant" name="montant" min="1" step="0.01" placeholder="Montant en €" required>
-      </div>
+    <!-- Champ pour le titre et le prix de l'événement -->
+    <div class="mb-3">
+      <label for="evenementNom" class="form-label">🎉 Événement : </label>
+      <input type="text" class="form-control" id="evenementNom" readonly th:value="${evenementSelectionne.titre}">
+    </div>
+    <div class="mb-3">
+      <label for="evenementMontant" class="form-label">💸 Montant :</label>
+      <input type="text" class="form-control" id="evenementMontant" readonly th:value="${evenementSelectionne.prix}">
+    </div>
 
-      <div id="card-element">
-        <!-- Élément pour le formulaire Stripe -->
-      </div>
+    <!-- Élément Stripe dynamique -->
+    <div id="card-element"></div>
+    <div id="card-errors" role="alert"></div>
 
-      <div id="card-errors" role="alert"></div>
-
-      <button id="submit" class="btn btn-primary mt-4">Payer</button>
-    </form>
-  </div>
+    <!-- Bouton de soumission -->
+    <button id="submit" class="btn btn-pay mt-3">💳 Payer Maintenant</button>
+  </form>
 </div>
 
-<!-- Inclure le script de traitement du paiement -->
+<!-- Inclure le script Stripe.js -->
 <script>
-  // Assurez-vous que Stripe est chargé
-  var stripe = Stripe('pk_test_51QQbNcHWZndTyBXSJzrGKVfBXdpuZMHpPtYFGx8PJ9d7kw1jaP14eJJW1toMD8qOTxFKGr6qYCKfILXQfK9uRC8o008QlwUlrt'); // Remplacez par votre clé publique Stripe
+  var stripe = Stripe('pk_test_51QQbNcHWZndTyBXSJzrGKVfBXdpuZMHpPtYFGx8PJ9d7kw1jaP14eJJW1toMD8qOTxFKGr6qYCKfILXQfK9uRC8o008QlwUlrt');
   var elements = stripe.elements();
   var card = elements.create('card');
   card.mount('#card-element');
 
   var form = document.getElementById('payment-form');
 
-  form.addEventListener('submit', function(event) {
+  form.addEventListener('submit', function (event) {
     event.preventDefault();
 
-    stripe.createPaymentMethod('card', card).then(function(result) {
+    stripe.createPaymentMethod('card', card).then(function (result) {
       if (result.error) {
-        // Afficher l'erreur dans le DOM
         document.getElementById('card-errors').textContent = result.error.message;
       } else {
-        // Envoi du PaymentIntent côté serveur
         fetch('/paiements/create', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             utilisateurId: document.getElementById('utilisateurId').value,
             evenementId: document.getElementById('evenementId').value,
             montant: document.getElementById('montant').value,
             paymentMethodId: result.paymentMethod.id,
           })
-        }).then(function(response) {
-          return response.json();
-        }).then(function(data) {
-          if (data.clientSecret) {
-            stripe.confirmCardPayment(data.clientSecret, {
-              payment_method: result.paymentMethod.id,
-            }).then(function(confirmResult) {
-              if (confirmResult.error) {
-                // Afficher l'erreur dans le DOM
-                document.getElementById('card-errors').textContent = confirmResult.error.message;
-              } else {
-                // Paiement réussi
-                alert('Paiement réussi !');
-              }
-            });
-          }
-        });
+        })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.clientSecret) {
+                    stripe.confirmCardPayment(data.clientSecret, {
+                      payment_method: result.paymentMethod.id,
+                    }).then(function (confirmResult) {
+                      if (confirmResult.error) {
+                        document.getElementById('card-errors').textContent = confirmResult.error.message;
+                      } else {
+                        alert('🎉 Paiement réussi !');
+                      }
+                    });
+                  }
+                });
       }
     });
   });
 </script>
-
 </body>
 </html>

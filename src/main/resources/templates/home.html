@@ -127,7 +127,7 @@
                         <strong>Prix :</strong> <span th:text="${evenement.prix}"></span> €
                     </p>
                     <p class="card-text text-truncate" th:text="${evenement.description}">Description de l'événement...</p>
-                    <a th:href="@{/paiements/form}" class="btn btn-register w-100">S'inscrire</a>
+                    <a th:href="@{/paiements/form(evenementId=${evenement.id})}" class="btn btn-register w-100">S'inscrire</a>
                 </div>
             </div>
         </div>
