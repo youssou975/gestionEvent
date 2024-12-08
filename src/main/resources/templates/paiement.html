@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paiement - Gestion Événements</title>
+
+  <!-- Inclure Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <!-- Inclure Bootstrap pour le style -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Ajouter un peu de style personnalisé -->
+  <style>
+    .payment-form {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    .payment-form h3 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .payment-form button {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="payment-form">
+    <h3>Payer pour l'Événement</h3>
+
+    <!-- Formulaire de paiement -->
+    <form id="payment-form" th:action="@{/paiements/create}" method="POST">
+      <div class="form-group">
+        <label for="utilisateurId">Utilisateur</label>
+        <select id="utilisateurId" class="form-control" name="utilisateurId" required>
+          <!-- Option d'utilisateur dynamique à ajouter -->
+          <option th:each="utilisateur : ${utilisateurs}" th:value="${utilisateur.id}" th:text="${utilisateur.nom}"></option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="evenementId">Événement</label>
+        <select id="evenementId" class="form-control" name="evenementId" required>
+          <!-- Option d'événements dynamique à ajouter -->
+          <option th:each="evenement : ${evenements}" th:value="${evenement.id}" th:text="${evenement.titre}"></option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="montant">Montant</label>
+        <input type="number" class="form-control" id="montant" name="montant" min="1" step="0.01" placeholder="Montant en €" required>
+      </div>
+
+      <div id="card-element">
+        <!-- Élément pour le formulaire Stripe -->
+      </div>
+
+      <div id="card-errors" role="alert"></div>
+
+      <button id="submit" class="btn btn-primary mt-4">Payer</button>
+    </form>
+  </div>
+</div>
+
+<!-- Inclure le script de traitement du paiement -->
+<script>
+  // Assurez-vous que Stripe est chargé
+  var stripe = Stripe('pk_test_51QQbNcHWZndTyBXSJzrGKVfBXdpuZMHpPtYFGx8PJ9d7kw1jaP14eJJW1toMD8qOTxFKGr6qYCKfILXQfK9uRC8o008QlwUlrt'); // Remplacez par votre clé publique Stripe
+  var elements = stripe.elements();
+  var card = elements.create('card');
+  card.mount('#card-element');
+
+  var form = document.getElementById('payment-form');
+
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    stripe.createPaymentMethod('card', card).then(function(result) {
+      if (result.error) {
+        // Afficher l'erreur dans le DOM
+        document.getElementById('card-errors').textContent = result.error.message;
+      } else {
+        // Envoi du PaymentIntent côté serveur
+        fetch('/paiements/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            utilisateurId: document.getElementById('utilisateurId').value,
+            evenementId: document.getElementById('evenementId').value,
+            montant: document.getElementById('montant').value,
+            paymentMethodId: result.paymentMethod.id,
+          })
+        }).then(function(response) {
+          return response.json();
+        }).then(function(data) {
+          if (data.clientSecret) {
+            stripe.confirmCardPayment(data.clientSecret, {
+              payment_method: result.paymentMethod.id,
+            }).then(function(confirmResult) {
+              if (confirmResult.error) {
+                // Afficher l'erreur dans le DOM
+                document.getElementById('card-errors').textContent = confirmResult.error.message;
+              } else {
+                // Paiement réussi
+                alert('Paiement réussi !');
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

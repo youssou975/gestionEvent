@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            color: #343a40;
+            font-weight: bold;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .text-center a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 400px;">
+        <h3 class="text-center mb-4"><i class="fa fa-sign-in-alt me-2"></i>Event News</h3>
+        <div th:if="${message}" class="alert alert-success" role="alert">
+            <span th:text="${message}"></span>
+        </div>
+        <form th:action="@{/login}" method="post" id="loginForm">
+            <div class="mb-3">
+                <label for="email" class="form-label"><i class="fa fa-envelope me-2"></i>Email</label>
+                <input type="email" name="username" class="form-control" id="email" placeholder="Email" required>
+                <small class="text-danger" id="emailError"></small>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label"><i class="fa fa-lock me-2"></i>Mot de passe</label>
+                <input type="password" name="password" class="form-control" id="password" placeholder="Mot de passe" required>
+                <small class="text-danger" id="passwordError"></small>
+            </div>
+            <button type="submit" class="btn btn-primary w-100"><i class="fa fa-sign-in-alt me-2"></i>Se Connecter</button>
+            <div th:if="${param.error}" class="alert alert-danger mt-3" role="alert">
+                Identifiants incorrects. Veuillez réessayer.
+            </div>
+            <div class="text-center mt-3">
+                <p>Pas de compte ? <a href="/register"><i class="fa fa-user-plus me-1"></i>Inscrivez-vous</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

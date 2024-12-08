@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil des Événements</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa; /* Couleur de fond douce */
+        }
+
+        .hero-section {
+            background: linear-gradient(to right, rgba(0, 123, 255, 0.7), rgba(23, 162, 184, 0.7)),
+            url('https://source.unsplash.com/1600x400/?events,conference') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        .event-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .event-image {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .event-info h5 {
+            color: #007bff;
+        }
+
+        .event-info p {
+            color: #6c757d;
+        }
+
+        .btn-register {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-register:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Event Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/evenements/ajouter}">
+                        <i class="fa fa-calendar-plus"></i> la Liste des Evenement
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/utilisateurs}">
+                        <i class="fa fa-users"></i> Mon panier
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" th:href="@{/logout}">
+                        <i class="fa fa-sign-out-alt"></i> Se Déconnecter
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Hero Section -->
+<section class="hero-section">
+    <h1>Bienvenue aux Événements</h1>
+    <p>Découvrez les événements les plus récents et inscrivez-vous pour participer.</p>
+</section>
+
+<!-- Liste des événements -->
+<div class="container my-5">
+    <h2 class="text-center mb-4">Nos Événements</h2>
+    <div class="row">
+        <!-- Boucle Thymeleaf -->
+        <div th:each="evenement : ${evenements}" class="col-md-4 mb-4">
+            <div class="card event-card">
+                <img th:src="@{'/images/' + ${evenement.id} + '.jpg'}" alt="Image de l'événement" class="card-img-top event-image">
+                <div class="card-body event-info">
+                    <h5 class="card-title" th:text="${evenement.titre}">Titre de l'événement</h5>
+                    <p class="card-text">
+                        <strong>Date :</strong> <span th:text="${evenement.date}"></span><br>
+                        <strong>Lieu :</strong> <span th:text="${evenement.lieu}"></span><br>
+                        <strong>Prix :</strong> <span th:text="${evenement.prix}"></span> €
+                    </p>
+                    <p class="card-text text-truncate" th:text="${evenement.description}">Description de l'événement...</p>
+                    <a th:href="@{/paiements/form}" class="btn btn-register w-100">S'inscrire</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
